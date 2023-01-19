@@ -30,5 +30,3 @@ class UniPoly:
     def __str__(self):
         # Create the displayable string form of the polynomial
         return f"{self.coefficient}*" + f"{self.indeterminate}**{self.exponent}"
-
-    

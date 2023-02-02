@@ -32,15 +32,34 @@ class UniPoly:
             self.terms = dict()
     
     def __neg__(self):
-        # Negate the polynomial term-wise unless its is already 0.
+        # Negate the polynomial term-wise unless it is already 0.
         if not self.terms:
             return self
         
-        new_poly = UniPoly(0, self.indeterminate)
+        new_poly = UniPoly(0, self.indeterminate) # Initialize a cero term
         for exponent in self.terms:
             new_poly.terms[exponent] = -self.terms[exponent]
 
         return new_poly
+    
+    def __copy__(self):
+        # Copies a polynomial, returning a new polynomial.
+        
+        new_poly = UniPoly(0, self.indeterminate)
+        for exponent in self.terms:
+            new_poly.terms[exponent] = self.terms[exponent]
+
+        return new_poly
+    
+    def __deepcopy__(self, memo):
+        # Copies a polynomial, returning a new polynomial.
+
+        return self.__copy__()
+
+    def __bool__(self):
+        # Returns "True" if self is nonzero.
+        return bool(self.terms)
+
 
     def __repr__(self):
         # Create the object representation of the polynomial
@@ -52,10 +71,32 @@ class UniPoly:
         if not self.terms:
             return '0'
         
-        print_terms = [
-                f"{self.terms[exponent]}*{self.indeterminate}**{exponent}"
-                for exponent in sorted(self.terms, reverse=True)
-                ]
+        def format_term(coefficient, exponent):
+
+            if exponent == 0:
+                return str(coefficient)
+            
+            if exponent == 1:
+                if coefficient == 1:
+                    return self.indeterminate
+                return f"{coefficient}*self.indeterminate"
+            
+            if coefficient == 1:
+                return f"{self.indeterminate}**{exponent}"
+            
+            return f"{coefficient}*{self.indeterminate}**{exponent}"
+
+        result = ""
+
+        for exponent in sorted(self.terms, reverse=True):
+            coefficient = self.terms[exponent]
+            term = format_term(coefficient, exponent)
+
+            if result:
+                result += f" - {term}" if coefficient < 0 else f" + {term}"
+
+            else:
+                result = f"{term}" if coefficient < 0 else term
         
-        return " + ".join(print_terms)
+        return result
 
